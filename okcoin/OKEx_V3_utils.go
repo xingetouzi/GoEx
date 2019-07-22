@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+	"reflect"
 
 	. "github.com/nntaoli-project/GoEx"
 )
@@ -47,6 +48,18 @@ func (okV3dp *OKExV3DataParser) ParseFutureTicker(data interface{}) (*FutureTick
 	}
 
 	return fallback, fmt.Errorf("unknown FutureTicker data: %v", data)
+}
+
+func Reverse(slice interface{}) {
+	s := reflect.ValueOf(slice)
+	// if s is a pointer of slice
+	if s.Kind() == reflect.Ptr {
+		s = s.Elem()
+	}
+	swp := reflect.Swapper(s.Interface())
+	for i, j := 0, s.Len()-1; i < j; i, j = i+1, j-1 {
+		swp(i, j)
+	}
 }
 
 func (okV3dp *OKExV3DataParser) ParseDepth(depth *Depth, data interface{}, size int) (*Depth, error) {
@@ -136,6 +149,10 @@ func (okV3dp *OKExV3DataParser) ParseDepth(depth *Depth, data interface{}, size 
 				break
 			}
 		}
+
+		// reverse depth.AskList
+		Reverse(depth.AskList)
+
 		return depth, nil
 	}
 

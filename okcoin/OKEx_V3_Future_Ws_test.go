@@ -50,6 +50,7 @@ func TestOKExV3FutureWsDepthCallback(t *testing.T) {
 	okV3Ws.DepthCallback(func(depth *goex.Depth) {
 		if len(depths) <= n {
 			t.Log(depth)
+			assert.True(t, checkDepth(depth))
 			depths = append(depths, *depth)
 		} 
 		if len(depths) == n {
